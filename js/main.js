@@ -2,9 +2,9 @@ const nombre = prompt("Ingrese su nombre");
 
 const apellido = prompt("Ingrese su apellido");
 
-let edad = Number(prompt("Ingrese su edad"));
+let edad = parseInt(prompt("Ingrese su edad"));
 
-let telefono = prompt("Ingrese su telefono");
+let telefono = parseInt(prompt("Ingrese su telefono"));
 
 let categoria = prompt("Por ultimo ingrese su categoria ");
 
