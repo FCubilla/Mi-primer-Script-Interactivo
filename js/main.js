@@ -7,41 +7,24 @@ class Turno {
         this.reservadoPor = null;
     }
 
-    calcularPrecio(edad) {
-        if (edad < 18 || edad >= 40) {
-            return this.precioBase * 0.75;
-        }
-        return this.precioBase;
-    }
 }
 
-const turnos = [
-    new Turno("Cancha 1", "Lunes", "10:30", 2000),
-    new Turno("Cancha 1", "Lunes", "12:00", 2000),
-    new Turno("Cancha 1", "Lunes", "13:30", 2000),
-    new Turno("Cancha 1", "Lunes", "15:00", 2000),
-    new Turno("Cancha 1", "Lunes", "16:30", 2000),
-    new Turno("Cancha 2", "Martes", "10:30", 2500),
-    new Turno("Cancha 2", "Martes", "12:00", 2500),
-    new Turno("Cancha 2", "Martes", "13:30", 2500),
-    new Turno("Cancha 2", "Martes", "15:00", 2500),
-    new Turno("Cancha 2", "Martes", "16:30", 2500),
-    new Turno("Cancha 3", "Miércoles", "10:30", 3000),
-    new Turno("Cancha 3", "Miércoles", "12:00", 3000),
-    new Turno("Cancha 3", "Miércoles", "13:30", 3000),
-    new Turno("Cancha 3", "Miércoles", "15:00", 3000),
-    new Turno("Cancha 3", "Miércoles", "16:30", 3000),
-    new Turno("Cancha 4", "Jueves", "10:30", 3500),
-    new Turno("Cancha 4", "Jueves", "12:00", 3500),
-    new Turno("Cancha 4", "Jueves", "13:30", 3500),
-    new Turno("Cancha 4", "Jueves", "15:00", 3500),
-    new Turno("Cancha 4", "Jueves", "16:30", 3500),
-    new Turno("Cancha 5", "Viernes", "10:30", 4000),
-    new Turno("Cancha 5", "Viernes", "12:00", 4000),
-    new Turno("Cancha 5", "Viernes", "13:30", 4000),
-    new Turno("Cancha 5", "Viernes", "15:00", 4000),
-    new Turno("Cancha 5", "Viernes", "16:30", 4000),
-];
+const canchas = ["Cancha 1", "Cancha 2", "Cancha 3", "Cancha 4"];
+
+const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+const horas = ["10:30", "12:00", "13:30", "15:00", "16:30"];
+
+const precioPorHora = { "10:30": 2000, "12:00": 2500, "13:30": 3000, "15:00": 3500, "16:30": 4000 };
+const descuentoPorHora = { "10:30": 35, "12:00": 25, "13:30": 20, "15:00": 10, "16:30": 5 };
+
+const turnos = [];
+for (const cancha of canchas) {
+    for (const dia of dias) {
+        for (const hora of horas) {
+            turnos.push(new Turno(cancha, dia, hora, precioPorHora[hora]));
+        }
+    }
+}
 
 
 function pedirDatos() {
@@ -108,34 +91,55 @@ function mostrarTurnosDisponibles() {
 }
 
 function reservarTurno(jugadorActivo) {
-        mostrarTurnosDisponibles();
         const diaDeseado = prompt("Ingrese el día deseado para reservar el turno:");
         const horaDeseada = prompt("Ingrese la hora deseada para reservar el turno:");
 
-    let turnoEncontrado = null;
-    for (const turno of turnos) {
-        if (turno.dia.toLowerCase() === diaDeseado.toLowerCase() && 
-            turno.hora === horaDeseada && 
-            turno.reservadoPor === null) 
-            {
-            turnoEncontrado = turno;
-            break;
+    if (diaDeseado === null || horaDeseada === null) {
+        alert("Debe ingresar tanto el día como la hora deseada.");
+    } else {
+        const opciones = turnos.filter(turno => turno.dia.toLowerCase() === diaDeseado.toLowerCase() && turno.hora === horaDeseada && turno.reservadoPor === null);
+    
+        if (opciones.length === 0) {
+            alert("No hay turnos disponibles para el día y hora seleccionados.");
+        } else {
+            const opcionesConPrecio = opciones.map((turno, indice) => {
+                const descuento = descuentoPorHora[turno.hora];
+                const precioFinal =
+                    turno.precioBase * (1 - descuento / 100);
+                return {
+                    turno: turno,
+                    numero: indice + 1,
+                    descuento: descuento,
+                    precioFinal: precioFinal
+                };
+            });
+            let mensaje = "Elige una cancha:\n";
+            opcionesConPrecio.forEach(opcion => {
+                mensaje += opcion.numero + ". Cancha: " + opcion.turno.cancha + ", descuento: " + opcion.descuento + "%, precio final: $" + opcion.precioFinal + "\n";
+            });
+            const respuesta = prompt(mensaje);
+            const numeroElegido = Number(respuesta);
+
+            const turnoElegido = opcionesConPrecio.find(opcion => opcion.numero === numeroElegido);
+
+            if (turnoElegido) {
+                turnoElegido.turno.reservadoPor = jugadorActivo;
+
+                alert("Turno reservado con exito por " + jugadorActivo.nombre + " " + jugadorActivo.apellido + " . El costo del turno es: $" + turnoElegido.precioFinal);
+            } else {
+                alert("La opción seleccionada no es válida.");
+            }
         }
     }
-    if (turnoEncontrado) {
-        turnoEncontrado.reservadoPor = jugadorActivo;
-        const costoTurno = turnoEncontrado.calcularPrecio(jugadorActivo.edad);
-        alert("¡Turno reservado con éxito! por " + jugadorActivo.nombre + " " + jugadorActivo.apellido + ". El costo del turno es: $" + costoTurno);
-    } else {
-        alert("No se encontró un turno disponible con los datos ingresados.");
-    }
 }
+
 const descuentosTurnos = (nombreDelJugador) => {
     alert("¡Hola " + nombreDelJugador + "! A continuación te mostramos los descuentos disponibles en alquiler de turnos según la hora del día.");
-    for (let hora = 10; hora <= 16; hora++) {
-        let descuentoTurno = (17 - hora) * 5; 
-        alert("Turno de las " + hora + ":00 hs ➔ ¡Tenés un " + descuentoTurno + "% de descuento en el alquiler de la cancha!");
-    }
+    
+    horas.forEach(hora => {
+        const descuentoTurno = descuentoPorHora[hora];
+        alert("Turno de las " + hora + " hs ➔ ¡Tenés un " + descuentoTurno + "% de descuento en el alquiler de la cancha!");
+    });
 }
 
 
