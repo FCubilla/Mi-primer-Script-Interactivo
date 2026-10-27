@@ -26,8 +26,66 @@ for (const cancha of canchas) {
     }
 }
 
+const contenedorTurnos = document.getElementById("turnos-disponibles");
+const mensaje = document.getElementById("mensaje");
+const nombreJugador = document.getElementById("nombre-jugador");
 
-function pedirDatos() {
+function mostrarTurnosEnHTML() {
+    let tarjetas = "";
+    canchas.forEach(cancha => {
+        let listaDeTurnos = ""
+
+        turnos.forEach((turno, indice) => {
+            if (turno.cancha === cancha) {
+                const estado = turno.reservadoPor === null 
+                ? "Disponible" 
+                : "Reservado";
+                
+                let boton = ""
+                if (turno.reservadoPor === null) {
+                    boton = `<button class="boton-reserva" data-indice="${indice}">Reservar</button>`;
+                } else if (
+                    turno.reservadoPor.toLowerCase() === nombreJugador.value.trim().toLowerCase()
+                ) {
+                    boton = `<button class="boton-cancelar" data-indice="${indice}">Cancelar</button>`;
+                }
+                
+                listaDeTurnos += 
+                `<li>${turno.cancha}, Día: ${turno.dia}, Hora: ${turno.hora}, Precio: $${turno.precioBase}, -Estado: ${estado} ${boton}</li>\n`;
+            }
+        });
+        tarjetas += `<div class="turno"><h2>${cancha}</h2><ul>${listaDeTurnos}</ul></div>`;
+    });
+    contenedorTurnos.innerHTML = tarjetas;
+}
+contenedorTurnos.addEventListener("click", (event) => {
+    if (event.target.className === "boton-reserva" || event.target.className === "boton-cancelar") {
+    if (event.target.className === "boton-reserva") {
+        const nombre = nombreJugador.value;
+        if (nombre === "") {
+            mensaje.textContent = "Por favor ingrese su nombre antes de reservar.";
+        } else {
+                const indice = Number(event.target.dataset.indice);
+                const turno = turnos[indice];
+                
+                turno.reservadoPor = nombre;
+                mensaje.textContent = `${nombre} Reservaste ${turno.cancha}, el ${turno.dia} a las ${turno.hora}.`;
+                mostrarTurnosEnHTML();
+            }
+    } else if (event.target.className === "boton-cancelar") {
+        const indice = Number(event.target.dataset.indice);
+        const turno = turnos[indice];
+        turno.reservadoPor = null;
+        mensaje.textContent = `Cancelaste la reserva de ${turno.cancha}, el ${turno.dia} a las ${turno.hora}.`;
+        mostrarTurnosEnHTML();
+    }
+    }
+});
+mostrarTurnosEnHTML();
+
+
+/*function pedirDatos() {
+
     const nombre = prompt("Ingrese su nombre");
     const apellido = prompt("Ingrese su apellido");
     let edad = parseInt(prompt("Ingrese su edad"));
@@ -57,9 +115,9 @@ function pedirDatos() {
         categoria:categoria,
         añoDeNacimiento:añoDeNacimiento
         };
-}
+}*/
 
-const jugador = pedirDatos();
+//const jugador = pedirDatos();
 // Array con 5 jugadores
 const listaJugadoresPadel = ["Rodrigo Alvarez", "Facundo Cubilla", "Alejo Aranda", "Felipe Palmieri", "Tomas Gonzalez"];
 const costoBaseInscripcion = 15000;
@@ -204,7 +262,7 @@ function buscarJugador() {
 }
 
 
-let opcion = "";
+/*let opcion = "";
 let continuar = true;
 
 while (opcion !== "8" && continuar) {
@@ -262,4 +320,4 @@ switch (opcion) {
         break;
 }
 
-}
+}*/
