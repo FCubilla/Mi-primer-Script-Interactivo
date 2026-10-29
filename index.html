@@ -9,8 +9,12 @@
 </head>
 <body>
     <h1>Turnero de Canchas de Padel</h1>
-    <label for="nombre-jugador">Nombre del jugador:</label>
-    <input id="nombre-jugador">
+    <p id="jugador-activo"></p>
+    <form id="form-jugador">
+        <label for="input-nombre">Nombre del jugador:</label>
+        <input id="input-nombre" type="text" required>
+        <button type="submit">Ingresar</button>
+    </form>
     <p id="mensaje"></p>
     <section id="turnos-disponibles"></section>
     
