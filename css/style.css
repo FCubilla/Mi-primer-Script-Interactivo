@@ -13,16 +13,16 @@ h1 {
 
 #turnos-disponibles {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    justify-content: center;
-    gap: 20px;
+    grid-template-columns: 110px repeat(4, minmax(130px, 1fr));
+    grid-auto-rows: minmax(55px, auto);
+    gap: 8px;
+    overflow-x: auto;
 }
 
-.turno {
-    background-color: #7d72b5;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.grilla-cancha, .grilla-hora, .boton-reserva, .boton-cancelar, .boton-reservado {
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
 }
 
 .boton-reserva {
