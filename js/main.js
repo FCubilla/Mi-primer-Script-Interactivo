@@ -13,21 +13,24 @@ const mensaje = document.getElementById("mensaje");
 const contenedorTurnos = document.getElementById("turnos-disponibles");
 const url = "/db/data.json";
 
-function cargarTurnos() {
-  fetch(url)
-    .then((respuesta) => respuesta.json())
-    .then((data) => {
-      const reservasGuardadas = localStorage.getItem("reservas");
-      if (reservasGuardadas) {
-        turnos = JSON.parse(reservasGuardadas);
-      } else {
-        turnos = data;
-      }
-      mostrarTurnosEnHTML();
-    })
-    .catch(() => {
-      mensaje.textContent = "No se pudieron cargar los turnos.";
-    });
+async function cargarTurnos() {
+  try {
+    const respuesta = await fetch(url);
+    const data = await respuesta.json();
+    const reservasGuardadas = localStorage.getItem("reservas");
+    if (reservasGuardadas) {
+      turnos = JSON.parse(reservasGuardadas);
+    } else {
+      turnos = data;
+    }
+    mostrarTurnosEnHTML();
+  } catch {
+    mensaje.textContent = "No se pudieron cargar los turnos.";
+  } finally {
+    if (mensaje.textContent === "Cargando turnos...") {
+      mensaje.textContent = ""
+    }
+  }
 }
 
 cargarTurnos();
