@@ -11,7 +11,7 @@ const jugadorActivo = document.getElementById("jugador-activo");
 const diaElegido = document.getElementById("dia-elegido");
 const mensaje = document.getElementById("mensaje");
 const contenedorTurnos = document.getElementById("turnos-disponibles");
-const url = "/db/data.json";
+const url = "./db/data.json";
 
 async function cargarTurnos() {
   try {
@@ -24,13 +24,10 @@ async function cargarTurnos() {
       turnos = data;
     }
     mostrarTurnosEnHTML();
-  } catch {
+  } catch (err) {
     mensaje.textContent = "No se pudieron cargar los turnos.";
-  } finally {
-    if (mensaje.textContent === "Cargando turnos...") {
-      mensaje.textContent = ""
-    }
-  }
+  } 
+
 }
 
 cargarTurnos();
